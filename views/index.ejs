@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distance Matrix App</title>
+</head>
+<body>
+<h1>Distance Matrix App</h1>
+
+<form id="distanceForm" action="/distance" method="GET">
+    <label for="origin">Select Origin:</label>
+    <select name="origin" id="origin">
+        <% locations.forEach((location) => { %>
+            <option value="<%= location %>"><%= location %></option>
+        <% }) %>
+    </select>
+
+    <label for="destination">Select Destination:</label>
+    <select name="destination" id="destination">
+        <% locations.forEach((location) => { %>
+            <option value="<%= location %>"><%= location %></option>
+        <% }) %>
+    </select>
+
+    <button type="submit">Calculate Distance</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+    document.getElementById('distanceForm').addEventListener('submit', function (event) {
+        event.preventDefault();
+        const form = event.target;
+        const formData = new FormData(form);
+        fetch(`/distance?${new URLSearchParams(formData).toString()}`)
+            .then(response => response.json())
+            .then(data => {
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `<h2>Distance: ${data.distance}</h2><h3>Duration: ${data.duration}</h3>`;
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = 'Error fetching data.';
+            });
+    });
+</script>
+</body>
+</html>
